@@ -1,0 +1,1 @@
+# rocket.chat_clear_history
