@@ -10,12 +10,12 @@ def main():
     outdate = str(datetime.datetime.now() + datetime.timedelta(days=-30))[:10]
     # This removes any messages 30+ days old
     subprocess.run(
-        """rocketchat-server.mongo parties --eval 'db.rocketchat_message.remove( { ts: { $lt: ISODate(\""""{outdate}"""\") } } );'""",
+        """rocketchat-server.mongo parties --eval 'db.rocketchat_message.remove( { ts: { $lt: ISODate(\""""+outdate+"""\") } } );'""",
         shell=True,
     )
     # This grabs any uploaded files that are 30+ days old.
     with subprocess.Popen(
-        """rocketchat-server.mongo parties --eval 'db.rocketchat_uploads.find( { uploadedAt: { $lt: ISODate(\""""{outdate}"""\") } } ).forEach(printjson);'""",
+        """rocketchat-server.mongo parties --eval 'db.rocketchat_uploads.find( { uploadedAt: { $lt: ISODate(\""""+outdate+"""\") } } ).forEach(printjson);'""",
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         shell=True,
@@ -28,15 +28,15 @@ def main():
         # iterates over the id's and removes them from the database
         for id in old_files_id:
             subprocess.run(
-                """rocketchat-server.mongo parties --eval 'db.rocketchat_uploads.chunks.remove({ files_id : {$eq : \""""{id}""""\"}})'""",
+                """rocketchat-server.mongo parties --eval 'db.rocketchat_uploads.chunks.remove({ files_id : {$eq : \""""+id+"""\"}})'""",
                 shell=True,
             )
             subprocess.run(
-                """rocketchat-server.mongo parties --eval 'db.rocketchat_uploads.files.remove({ _id : {$eq : \""""{id}"""\"}})'""",
+                """rocketchat-server.mongo parties --eval 'db.rocketchat_uploads.files.remove({ _id : {$eq : \""""+id+"""\"}})'""",
                 shell=True,
             )
             subprocess.run(
-                """rocketchat-server.mongo parties --eval 'db.rocketchat_uploads.remove({ _id : {$eq : \""""{id}"""\"}})'""",
+                """rocketchat-server.mongo parties --eval 'db.rocketchat_uploads.remove({ _id : {$eq : \""""+id+"""\"}})'""",
                 shell=True,
             )
 
